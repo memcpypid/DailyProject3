@@ -56,12 +56,17 @@ Setiap `Candidate` adalah temuan hasil riset manual periset (lewat
 `POST /alumni/{id}/candidates/manual`) - tidak ada data yang masuk ke tabel ini
 lewat proses otomatis apa pun.
 
-### Konfirmasi identitas: "yang terbaru menang"
+### Penilaian, fusion bukti, dan konfirmasi identitas
 
-Sistem tidak melakukan skoring/fusi otomatis. Setiap kali periset menyimpan
-kandidat manual baru untuk seorang alumni, kandidat itu langsung menjadi
-`Alumni.confirmed_candidate_id` dan status berubah jadi `TERVERIFIKASI_MANUAL`
-- menimpa konfirmasi sebelumnya (lihat `tracking_service.add_manual_candidate`).
+Setiap kandidat dinilai dengan bobot rancangan Daily Project 2: kemiripan nama
+40%, afiliasi 30%, timeline 15%, dan bidang 15%. Bukti identitas yang sama dari
+sumber berbeda menambah skor fusion 5 poin per sumber tambahan. Skor tinggi
+menjadi `TERVERIFIKASI_OTOMATIS`, skor sedang menjadi
+`PERLU_TINJAUAN_MANUAL`, dan skor rendah menjadi `TIDAK_DITEMUKAN`.
+
+Admin dapat menerima, menolak, atau menandai kandidat untuk dicek ulang.
+Keputusan terima menetapkan `confirmed_candidate_id` dan status
+`TERVERIFIKASI_MANUAL`.
 `confirmed_candidate_id` **bukan duplikasi kolom**, melainkan foreign key ke
 `candidates.id` (relasi timbal balik dengan `Candidate.alumni_id`, ditangani
 via `post_update=True` di `models.py` karena kedua tabel saling mereferensikan).
@@ -109,8 +114,8 @@ per satu.
 
 **Satu-satunya cara data masuk**: `POST /api/v1/alumni/{id}/candidates/manual`, setelah
 periset benar-benar memverifikasi temuan satu alumni pada satu waktu (cara kerja normal
-unit alumni kampus). Kandidat manual terbaru yang disimpan otomatis menjadi identitas
-terkonfirmasi ("yang terbaru menang", lihat bagian di atas).
+unit alumni kampus). Temuan tersebut dinilai secara transparan dan kasus ambigu
+masuk ke alur tinjauan manual.
 
 ### Fitur "Cari di Internet" (pencarian web berbantuan manusia)
 
@@ -158,7 +163,8 @@ dengan pesan generik ke klien (detail teknis tidak dibocorkan ke frontend).
 | GET/PUT | `/api/v1/users/me` | Profil akun sendiri |
 | GET/POST | `/api/v1/alumni` | Daftar (dengan paginasi/pencarian) & tambah alumni |
 | GET/PUT/DELETE | `/api/v1/alumni/{id}` | Detail/ubah/hapus alumni |
-| POST | `/api/v1/alumni/{id}/candidates/manual` | Simpan temuan hasil riset manual (data sungguhan) |
+| POST | `/api/v1/alumni/{id}/candidates/manual` | Simpan dan nilai temuan hasil riset manual |
+| POST | `/api/v1/alumni/{id}/candidates/{candidate_id}/review` | Terima, tolak, atau cek ulang kandidat |
 | GET | `/api/v1/alumni/{id}/candidates` | Riwayat kandidat manual alumni |
 | GET | `/api/v1/alumni/{id}/search-web` | Cari referensi via SerpApi (tidak menyimpan apa pun) |
 | GET/POST/PUT/DELETE | `/api/v1/sources` | Kelola sumber data & bobot kepercayaan |

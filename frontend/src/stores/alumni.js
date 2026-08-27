@@ -72,6 +72,13 @@ export const useAlumniStore = defineStore("alumni", () => {
     return res.data.data;
   };
 
+  const reviewCandidate = async (alumniId, candidateId, decision) => {
+    const res = await alumniService.reviewCandidate(alumniId, candidateId, decision);
+    toast.success("Keputusan tinjauan tersimpan");
+    await Promise.all([fetchOne(alumniId), fetchCandidates(alumniId)]);
+    return res.data.data;
+  };
+
   const searchWeb = async (id) => {
     searching.value = true;
     searchResults.value = [];
@@ -123,6 +130,7 @@ export const useAlumniStore = defineStore("alumni", () => {
     update,
     remove,
     addManualCandidate,
+    reviewCandidate,
     importExcel,
     searchWeb,
   };

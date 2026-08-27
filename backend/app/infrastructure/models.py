@@ -127,6 +127,16 @@ class Candidate(Base):
 
     snippet: Mapped[str] = mapped_column(Text, default="")
 
+    # Jejak penilaian identitas sesuai rancangan Daily Project 2.
+    name_score: Mapped[float] = mapped_column(Float, default=0.0)
+    affiliation_score: Mapped[float] = mapped_column(Float, default=0.0)
+    timeline_score: Mapped[float] = mapped_column(Float, default=0.0)
+    field_score: Mapped[float] = mapped_column(Float, default=0.0)
+    match_score: Mapped[float] = mapped_column(Float, default=0.0)
+    evidence_count: Mapped[int] = mapped_column(Integer, default=1)
+    review_status: Mapped[str] = mapped_column(String(24), default="PENDING")
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
     fetched_at: Mapped[datetime] = mapped_column(DateTime, default=_now)
 
     alumni: Mapped["Alumni"] = relationship(back_populates="candidates", foreign_keys=[alumni_id])

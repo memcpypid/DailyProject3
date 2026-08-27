@@ -8,13 +8,14 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.v1.router import api_router
 from app.core.config import get_settings
-from app.infrastructure.db import Base, engine
+from app.infrastructure.db import Base, engine, migrate_sqlite_schema
 from app.infrastructure import models  # noqa: F401  (register models on Base.metadata)
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
 
 Base.metadata.create_all(bind=engine)
+migrate_sqlite_schema()
 
 app = FastAPI(title=settings.APP_NAME)
 

@@ -15,7 +15,10 @@ class DashboardService:
         counts = self.alumni_repo.count_by_status(owner_id)
         breakdown = {
             "belum_dilacak": counts.get("BELUM_DILACAK", 0),
+            "terverifikasi_otomatis": counts.get("TERVERIFIKASI_OTOMATIS", 0),
             "terverifikasi_manual": counts.get("TERVERIFIKASI_MANUAL", 0),
+            "perlu_tinjauan_manual": counts.get("PERLU_TINJAUAN_MANUAL", 0),
+            "tidak_ditemukan": counts.get("TIDAK_DITEMUKAN", 0),
         }
         breakdown["total"] = sum(breakdown.values())
 

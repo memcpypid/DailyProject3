@@ -33,7 +33,10 @@ const batchPanelOpen = ref(false);
 const statusOptions = [
   { value: '', label: 'Semua Status' },
   { value: 'BELUM_DILACAK', label: 'Belum Dilacak' },
+  { value: 'TERVERIFIKASI_OTOMATIS', label: 'Terverifikasi Otomatis' },
   { value: 'TERVERIFIKASI_MANUAL', label: 'Terverifikasi (Manual)' },
+  { value: 'PERLU_TINJAUAN_MANUAL', label: 'Perlu Tinjauan Manual' },
+  { value: 'TIDAK_DITEMUKAN', label: 'Tidak Ditemukan' },
 ];
 
 const load = (page = 1) => {

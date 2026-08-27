@@ -5,7 +5,7 @@ from app.api.deps import get_current_user
 from app.infrastructure.db import get_db
 from app.infrastructure.models import User
 from app.repositories.candidate_repository import CandidateRepository
-from app.schemas.candidate import CandidateResponse, ManualCandidateRequest
+from app.schemas.candidate import CandidateResponse, CandidateReviewRequest, ManualCandidateRequest
 from app.schemas.common import SuccessResponse
 from app.schemas.websearch import WebSearchResult
 from app.services import websearch_service
@@ -30,6 +30,20 @@ def add_manual_candidate(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
     return SuccessResponse(message="Temuan manual tersimpan", data=CandidateResponse.from_model(candidate))
+
+
+@router.post("/alumni/{alumni_id}/candidates/{candidate_id}/review", response_model=SuccessResponse[CandidateResponse])
+def review_candidate(alumni_id: str, candidate_id: str, payload: CandidateReviewRequest,
+                     current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    try:
+        _, candidate = TrackingService(db).review_candidate(
+            current_user.id, alumni_id, candidate_id, payload.decision
+        )
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return SuccessResponse(message="Keputusan tinjauan tersimpan", data=CandidateResponse.from_model(candidate))
 
 
 @router.get("/alumni/{alumni_id}/candidates", response_model=SuccessResponse[list[CandidateResponse]])

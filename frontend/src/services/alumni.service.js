@@ -29,6 +29,10 @@ class AlumniService {
     return api.post(`/api/v1/alumni/${id}/candidates/manual`, payload);
   }
 
+  reviewCandidate(alumniId, candidateId, decision) {
+    return api.post(`/api/v1/alumni/${alumniId}/candidates/${candidateId}/review`, { decision });
+  }
+
   searchWeb(id) {
     return api.get(`/api/v1/alumni/${id}/search-web`);
   }

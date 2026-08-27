@@ -25,6 +25,14 @@ class CandidateResponse(BaseModel):
     employer_social_media: str
 
     snippet: str
+    name_score: float
+    affiliation_score: float
+    timeline_score: float
+    field_score: float
+    match_score: float
+    evidence_count: int
+    review_status: str
+    reviewed_at: datetime | None
     fetched_at: datetime
 
     @classmethod
@@ -47,6 +55,14 @@ class CandidateResponse(BaseModel):
             employment_type=candidate.employment_type,
             employer_social_media=candidate.employer_social_media,
             snippet=candidate.snippet,
+            name_score=candidate.name_score,
+            affiliation_score=candidate.affiliation_score,
+            timeline_score=candidate.timeline_score,
+            field_score=candidate.field_score,
+            match_score=candidate.match_score,
+            evidence_count=candidate.evidence_count,
+            review_status=candidate.review_status,
+            reviewed_at=candidate.reviewed_at,
             fetched_at=candidate.fetched_at,
         )
 
@@ -68,3 +84,7 @@ class ManualCandidateRequest(BaseModel):
     employment_type: str = ""
     employer_social_media: str = ""
     snippet: str = ""
+
+
+class CandidateReviewRequest(BaseModel):
+    decision: str

@@ -5,7 +5,10 @@ from pydantic import BaseModel
 
 class StatusBreakdown(BaseModel):
     belum_dilacak: int
+    terverifikasi_otomatis: int
     terverifikasi_manual: int
+    perlu_tinjauan_manual: int
+    tidak_ditemukan: int
     total: int
 
 

@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { Users, CheckCircle2, Database, UserPlus } from 'lucide-vue-next';
+import { Users, CheckCircle2, Database, UserPlus, AlertTriangle, SearchX } from 'lucide-vue-next';
 import { useDashboardStore } from '@/stores/dashboard';
 import Card from '@/components/ui/Card.vue';
 import Button from '@/components/ui/Button.vue';
@@ -16,7 +16,10 @@ onMounted(() => {
 
 const statCards = [
   { key: 'belum_dilacak', label: 'Belum Dilacak', icon: Users, color: 'text-muted-foreground' },
+  { key: 'terverifikasi_otomatis', label: 'Terverifikasi Otomatis', icon: CheckCircle2, color: 'text-emerald-500' },
   { key: 'terverifikasi_manual', label: 'Terverifikasi (Manual)', icon: CheckCircle2, color: 'text-emerald-500' },
+  { key: 'perlu_tinjauan_manual', label: 'Perlu Tinjauan Manual', icon: AlertTriangle, color: 'text-amber-500' },
+  { key: 'tidak_ditemukan', label: 'Tidak Ditemukan', icon: SearchX, color: 'text-rose-500' },
 ];
 
 const formatDate = (iso) => new Date(iso).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
@@ -37,9 +40,9 @@ const formatDate = (iso) => new Date(iso).toLocaleString('id-ID', { dateStyle: '
       </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
       <template v-if="dashboardStore.loading && !dashboardStore.stats">
-        <Skeleton v-for="i in 2" :key="i" height="6rem" custom-class="rounded-xl" />
+        <Skeleton v-for="i in 5" :key="i" height="6rem" custom-class="rounded-xl" />
       </template>
       <Card v-else v-for="card in statCards" :key="card.key" body-class="p-6">
         <div class="flex items-center justify-between">

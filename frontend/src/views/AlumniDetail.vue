@@ -85,6 +85,7 @@ const socialLinks = (candidate) => [
 ].filter((l) => l.url);
 
 const formatDate = (iso) => (iso ? new Date(iso).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) : '-');
+const review = (candidate, decision) => alumniStore.reviewCandidate(alumniId.value, candidate.id, decision);
 </script>
 
 <template>
@@ -190,7 +191,16 @@ const formatDate = (iso) => (iso ? new Date(iso).toLocaleString('id-ID', { dateS
                   Terkonfirmasi
                 </Badge>
                 <Badge v-else variant="outline" custom-class="mt-1">Riwayat</Badge>
+                <p class="mt-2 text-lg font-bold text-primary">{{ candidate.match_score.toFixed(1) }}</p>
+                <p class="text-[10px] text-muted-foreground">skor kecocokan</p>
               </div>
+            </div>
+
+            <div class="mb-3 grid grid-cols-4 gap-1 text-center text-[10px] text-muted-foreground">
+              <div class="rounded bg-secondary p-1">Nama<br><strong class="text-foreground">{{ candidate.name_score.toFixed(0) }}</strong></div>
+              <div class="rounded bg-secondary p-1">Afiliasi<br><strong class="text-foreground">{{ candidate.affiliation_score.toFixed(0) }}</strong></div>
+              <div class="rounded bg-secondary p-1">Timeline<br><strong class="text-foreground">{{ candidate.timeline_score.toFixed(0) }}</strong></div>
+              <div class="rounded bg-secondary p-1">Bidang<br><strong class="text-foreground">{{ candidate.field_score.toFixed(0) }}</strong></div>
             </div>
 
             <div class="flex items-start gap-2 text-sm text-foreground">
@@ -219,6 +229,13 @@ const formatDate = (iso) => (iso ? new Date(iso).toLocaleString('id-ID', { dateS
             </div>
 
             <p v-if="candidate.snippet" class="text-xs text-muted-foreground mt-3 italic">{{ candidate.snippet }}</p>
+            <div v-if="candidate.review_status === 'PENDING' || candidate.review_status === 'RECHECK'"
+              class="mt-4 flex flex-wrap gap-2 border-t border-border pt-3">
+              <Button size="sm" @click="review(candidate, 'ACCEPT')">Terima</Button>
+              <Button size="sm" variant="outline" @click="review(candidate, 'RECHECK')">Cek Ulang</Button>
+              <Button size="sm" variant="danger" @click="review(candidate, 'REJECT')">Tolak</Button>
+            </div>
+            <p v-else class="mt-3 text-xs font-medium text-muted-foreground">Keputusan: {{ candidate.review_status }}</p>
           </Card>
         </div>
 

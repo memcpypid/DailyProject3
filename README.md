@@ -37,12 +37,13 @@ memverifikasi dan memasukkannya secara manual.
 | Fitur | Keterangan |
 |---|---|
 | Login | Autentikasi menggunakan access token dan refresh token JWT; registrasi publik dinonaktifkan |
-| Dashboard | Menampilkan ringkasan jumlah alumni berdasarkan status pelacakan |
+| Dashboard | Menampilkan ringkasan lima status pelacakan sesuai rancangan |
 | Data alumni | Tambah, lihat, ubah, hapus, cari, filter status, dan paginasi data alumni |
 | Detail alumni | Tekan **Nama Lulusan** pada daftar alumni untuk membuka pencarian dan detail pelacakan |
 | Impor roster | Impor data alumni dari XLSX dengan validasi, dry-run, dan perlindungan duplikasi NIM |
 | Pencarian web | Menggunakan enam data induk alumni untuk mencari 8 kelompok data target Daily Project 4 melalui SerpApi; hasil wajib ditinjau manusia dan tidak disimpan otomatis |
-| Kandidat manual | Menyimpan data hasil verifikasi manual; kandidat terbaru menjadi identitas terkonfirmasi |
+| Kandidat & skor | Menilai nama/afiliasi/timeline/bidang dan menggabungkan dukungan lintas sumber |
+| Tinjauan manual | Admin menerima, menolak, atau menjadwalkan cek ulang kandidat ambigu |
 | Sumber data | Mengatur sumber pencarian, status aktif, dan bobot kepercayaan |
 | Profil | Melihat dan memperbarui nama atau password akun aktif |
 | Privasi | Data alumni terisolasi per akun dan tidak dikumpulkan otomatis secara massal |
