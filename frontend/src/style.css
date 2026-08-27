@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+
+  --animate-fade-in: fadeIn 0.4s ease-out forwards;
+  --animate-fade-in-up: fadeInUp 0.5s ease-out forwards;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #0f172a;
+    
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+
+    --primary: #4f46e5;      /* Indigo 600 */
+    --primary-hover: #4338ca; /* Indigo 700 */
+    --primary-foreground: #ffffff;
+
+    --secondary: #f1f5f9;    /* Slate 100 */
+    --secondary-foreground: #0f172a; /* Slate 900 */
+
+    --muted: #f8fafc;
+    --muted-foreground: #64748b; /* Slate 500 */
+
+    --border: #e2e8f0;       /* Slate 200 */
+    --input: #e2e8f0;
+  }
+
+  .dark {
+    --background: #0f172a;   /* Slate 900 */
+    --foreground: #f8fafc;   /* Slate 50 */
+    
+    --card: #1e293b;         /* Slate 800 */
+    --card-foreground: #f8fafc;
+
+    --primary: #6366f1;      /* Indigo 500 */
+    --primary-hover: #818cf8; /* Indigo 400 */
+    --primary-foreground: #ffffff;
+
+    --secondary: #334155;    /* Slate 700 */
+    --secondary-foreground: #f8fafc;
+
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8; /* Slate 400 */
+
+    --border: #334155;
+    --input: #334155;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
