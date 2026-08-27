@@ -22,11 +22,11 @@ memverifikasi dan memasukkannya secara manual.
 
 | Kebutuhan | Tautan | Status |
 |---|---|---|
-| Source code GitHub | Belum tersedia | Perlu mengunggah proyek ke GitHub dan mengganti teks ini dengan URL repositori |
+| Source code GitHub | [github.com/memcpypid/DailyProject3](https://github.com/memcpypid/DailyProject3) | Tersedia |
 | Publikasi web | Belum tersedia | Perlu melakukan deployment frontend dan backend, lalu mengganti teks ini dengan URL aplikasi |
 
-> Catatan: tidak ditemukan konfigurasi repositori Git maupun URL deployment di workspace,
-> sehingga tautan tidak dibuat-buat. Kedua tautan di atas wajib dilengkapi sebelum pengumpulan.
+> Catatan: URL deployment belum ditemukan di workspace. Tautan publikasi web wajib
+> dilengkapi setelah frontend dan backend berhasil di-deploy.
 
 ## Teknologi
 
