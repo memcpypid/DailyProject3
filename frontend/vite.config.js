@@ -11,7 +11,6 @@ export default defineConfig({
     },
   },
   build: {
-    minify: "esbuild",
     sourcemap: false,
     cssCodeSplit: true,
     chunkSizeWarningLimit: 1000,

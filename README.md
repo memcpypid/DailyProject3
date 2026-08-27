@@ -63,8 +63,7 @@ Frontend menggunakan API pada `http://localhost:8000` secara default.
 ## Pengujian
 
 Pengujian dilakukan pada 27 Agustus 2026. Status **Lulus** hanya diberikan pada skenario
-yang benar-benar tercakup oleh test otomatis dan berhasil dijalankan. Satu skenario
-build frontend yang gagal dicatat sebagai temuan agar hasil pengujian dapat diaudit.
+yang benar-benar tercakup oleh test otomatis dan berhasil dijalankan.
 
 ### Tabel Kasus Uji Backend
 
@@ -106,15 +105,15 @@ build frontend yang gagal dicatat sebagai temuan agar hasil pengujian dapat diau
 | ID | Aspek kualitas | Perintah | Hasil aktual | Status |
 |---|---|---|---|---|
 | VER-01 | Keandalan backend | `cd backend && ./venv/bin/python -m pytest -q` | 31 test lulus dalam 11,89 detik; terdapat 1 peringatan deprecasi dari FastAPI TestClient | Lulus |
-| VER-02 | Build frontend | `cd frontend && npm run build` | Build gagal karena Vite memerlukan paket `esbuild` yang belum terpasang sebagai dependensi terpisah | Gagal — perlu diperbaiki |
+| VER-02 | Build frontend | `cd frontend && npm run build` | Build produksi Vite berhasil; 1.913 modul ditransformasi | Lulus |
 
 ### Ringkasan Hasil
 
 | Komponen | Lulus | Gagal | Total |
 |---|---:|---:|---:|
 | Test otomatis backend | 31 | 0 | 31 |
-| Verifikasi build frontend | 0 | 1 | 1 |
-| **Keseluruhan** | **31** | **1** | **32** |
+| Verifikasi build frontend | 1 | 0 | 1 |
+| **Keseluruhan** | **32** | **0** | **32** |
 
 ### Cakupan yang Belum Diuji
 
@@ -136,5 +135,6 @@ DailyProject3/
 ```
 
 Dokumentasi teknis lebih rinci tersedia pada
-[`backend/README.md`](backend/README.md) dan [`frontend/README.md`](frontend/README.md).
+[`backend/README.md`](backend/README.md), [`frontend/README.md`](frontend/README.md),
+dan [`deploy/README.md`](deploy/README.md).
 # DailyProject3
