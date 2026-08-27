@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { Plus, Search, Pencil, Trash2, ChevronLeft, ChevronRight, FileSpreadsheet } from 'lucide-vue-next';
+import { Plus, Search, Pencil, Trash2, ChevronLeft, ChevronRight, FileSpreadsheet, ListChecks, ExternalLink, X } from 'lucide-vue-next';
 import { useAlumniStore } from '@/stores/alumni';
 import { useStatusBadge } from '@/composables/useStatusBadge';
 import Card from '@/components/ui/Card.vue';
@@ -27,6 +27,8 @@ const editingAlumni = ref(null);
 const confirmOpen = ref(false);
 const deletingAlumni = ref(null);
 const deleting = ref(false);
+const selectedIds = ref([]);
+const batchPanelOpen = ref(false);
 
 const statusOptions = [
   { value: '', label: 'Semua Status' },
@@ -48,9 +50,13 @@ onMounted(() => load(1));
 let searchTimeout;
 watch(search, () => {
   clearTimeout(searchTimeout);
+  selectedIds.value = [];
   searchTimeout = setTimeout(() => load(1), 350);
 });
-watch(statusFilter, () => load(1));
+watch(statusFilter, () => {
+  selectedIds.value = [];
+  load(1);
+});
 
 const openCreate = () => {
   editingAlumni.value = null;
@@ -79,7 +85,40 @@ const confirmDelete = async () => {
 
 const goToPage = (page) => {
   if (page < 1 || page > alumniStore.pagination.total_pages) return;
+  selectedIds.value = [];
   load(page);
+};
+
+const allVisibleSelected = () =>
+  alumniStore.items.length > 0 && alumniStore.items.every((item) => selectedIds.value.includes(item.id));
+
+const toggleAllVisible = () => {
+  const visibleIds = alumniStore.items.map((item) => item.id);
+  if (allVisibleSelected()) {
+    selectedIds.value = selectedIds.value.filter((id) => !visibleIds.includes(id));
+  } else {
+    selectedIds.value = [...new Set([...selectedIds.value, ...visibleIds])];
+  }
+};
+
+const selectedAlumni = () => alumniStore.items.filter((item) => selectedIds.value.includes(item.id));
+
+const searchTargetsFor = (alumni) => {
+  const identity = [alumni.full_name, alumni.nim, alumni.program_studi, alumni.fakultas]
+    .filter(Boolean)
+    .map((value) => `"${value}"`)
+    .join(' ');
+  const targets = [
+    ['Media sosial', `${identity} LinkedIn OR Instagram OR Facebook OR TikTok`],
+    ['Email dan nomor HP', `${identity} email OR telepon OR WhatsApp`],
+    ['Tempat dan alamat bekerja', `${identity} bekerja OR perusahaan OR instansi`],
+    ['Posisi dan jenis pekerjaan', `${identity} jabatan OR posisi OR PNS OR swasta OR wirausaha`],
+    ['Media sosial tempat bekerja', `${identity} perusahaan LinkedIn OR Instagram OR Facebook`],
+  ];
+  return targets.map(([label, query]) => ({
+    label,
+    url: `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+  }));
 };
 </script>
 
@@ -91,6 +130,10 @@ const goToPage = (page) => {
         <p class="text-muted-foreground mt-2">Kelola profil alumni dan catat temuan hasil riset manual.</p>
       </div>
       <div class="flex gap-2">
+        <Button variant="outline" :disabled="!selectedIds.length" @click="batchPanelOpen = true">
+          <template #icon-left><ListChecks class="w-4 h-4 mr-2" /></template>
+          Pencarian Batch ({{ selectedIds.length }})
+        </Button>
         <Button variant="outline" @click="importModalOpen = true">
           <template #icon-left><FileSpreadsheet class="w-4 h-4 mr-2" /></template>
           Impor Excel
@@ -127,6 +170,10 @@ const goToPage = (page) => {
         <table class="w-full text-sm">
           <thead>
             <tr class="text-left text-muted-foreground border-b border-border">
+              <th class="pb-3 pr-3 font-medium">
+                <input type="checkbox" :checked="allVisibleSelected()" aria-label="Pilih semua alumni pada halaman ini"
+                  class="h-4 w-4 rounded border-border" @change="toggleAllVisible" />
+              </th>
               <th class="pb-3 font-medium">Nama Lulusan</th>
               <th class="pb-3 font-medium">Fakultas / Program Studi</th>
               <th class="pb-3 font-medium">Tanggal Lulus</th>
@@ -136,6 +183,10 @@ const goToPage = (page) => {
           </thead>
           <tbody>
             <tr v-for="alumni in alumniStore.items" :key="alumni.id" class="border-b border-border last:border-0">
+              <td class="py-3 pr-3">
+                <input v-model="selectedIds" type="checkbox" :value="alumni.id"
+                  :aria-label="`Pilih ${alumni.full_name}`" class="h-4 w-4 rounded border-border" />
+              </td>
               <td class="py-3">
                 <router-link :to="`/app/alumni/${alumni.id}`" class="font-medium text-foreground hover:text-primary hover:underline">
                   {{ alumni.full_name }}
@@ -190,5 +241,34 @@ const goToPage = (page) => {
     <ConfirmModal :is-open="confirmOpen" title="Hapus Alumni"
       :message="`Yakin ingin menghapus data ${deletingAlumni?.full_name}? Tindakan ini tidak dapat dibatalkan.`"
       confirm-text="Hapus" type="danger" :is-loading="deleting" @close="confirmOpen = false" @confirm="confirmDelete" />
+
+    <div v-if="batchPanelOpen" class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+      <div class="fixed inset-0 bg-black/10 backdrop-blur-sm" @click="batchPanelOpen = false"></div>
+      <div class="flex min-h-screen items-end justify-center p-4 sm:items-center">
+        <div class="relative w-full max-w-3xl rounded-lg border border-border bg-card shadow-xl" @click.stop>
+          <div class="flex items-start justify-between border-b border-border p-5">
+            <div>
+              <h3 class="text-lg font-semibold text-foreground">Pencarian Batch Tanpa API</h3>
+              <p class="mt-1 text-xs text-muted-foreground">
+                Buka tautan satu per satu, verifikasi hasilnya, lalu simpan melalui Input Manual. Sistem tidak melakukan scraping atau penyimpanan otomatis.
+              </p>
+            </div>
+            <button class="text-muted-foreground hover:text-foreground" @click="batchPanelOpen = false"><X class="h-5 w-5" /></button>
+          </div>
+          <div class="max-h-[70vh] space-y-4 overflow-y-auto p-5">
+            <div v-for="alumni in selectedAlumni()" :key="alumni.id" class="rounded-lg border border-border p-4">
+              <p class="font-semibold text-foreground">{{ alumni.full_name }}</p>
+              <p class="text-xs text-muted-foreground">NIM {{ alumni.nim || '-' }} · {{ alumni.program_studi || '-' }}</p>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <a v-for="target in searchTargetsFor(alumni)" :key="target.label" :href="target.url" target="_blank" rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-xs font-medium text-foreground hover:bg-accent">
+                  {{ target.label }} <ExternalLink class="h-3.5 w-3.5" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
