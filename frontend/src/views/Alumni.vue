@@ -102,6 +102,11 @@ const goToPage = (page) => {
       </div>
     </div>
 
+    <div class="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-foreground">
+      <Search class="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+      <p>Silakan tekan <strong>Nama Lulusan</strong> untuk dapat mencari data.</p>
+    </div>
+
     <Card body-class="p-4 sm:p-6">
       <div class="flex flex-col sm:flex-row gap-4 mb-6">
         <Input id="search" v-model="search" placeholder="Cari nama atau NIM..." custom-class="flex-1">
