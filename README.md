@@ -14,6 +14,9 @@ data SQLite. Sistem mendukung autentikasi, pengelolaan data alumni, impor roster
 pengelolaan sumber pencarian, pencarian web berbantuan manusia, pencatatan kandidat
 manual, serta statistik dashboard.
 
+Registrasi publik dinonaktifkan. Aplikasi hanya dapat diakses menggunakan akun yang
+telah disediakan oleh administrator.
+
 Pengumpulan data pribadi tidak dijalankan secara otomatis dan massal. Hasil pencarian
 web hanya ditampilkan untuk ditinjau oleh pengguna; data baru disimpan setelah pengguna
 memverifikasi dan memasukkannya secara manual.
@@ -23,10 +26,26 @@ memverifikasi dan memasukkannya secara manual.
 | Kebutuhan | Tautan | Status |
 |---|---|---|
 | Source code GitHub | [github.com/memcpypid/DailyProject3](https://github.com/memcpypid/DailyProject3) | Tersedia |
-| Publikasi web | Belum tersedia | Perlu melakukan deployment frontend dan backend, lalu mengganti teks ini dengan URL aplikasi |
+| Publikasi web | [sinata.tech](https://sinata.tech) | Tersedia |
+| Dokumentasi API | [sinata.tech/docs](https://sinata.tech/docs) | Tersedia untuk administrator/pengembang |
 
-> Catatan: URL deployment belum ditemukan di workspace. Tautan publikasi web wajib
-> dilengkapi setelah frontend dan backend berhasil di-deploy.
+> Keamanan: kredensial akun dan API key tidak dicantumkan di README. Hubungi
+> administrator untuk mendapatkan akses aplikasi.
+
+## Fitur Utama
+
+| Fitur | Keterangan |
+|---|---|
+| Login | Autentikasi menggunakan access token dan refresh token JWT; registrasi publik dinonaktifkan |
+| Dashboard | Menampilkan ringkasan jumlah alumni berdasarkan status pelacakan |
+| Data alumni | Tambah, lihat, ubah, hapus, cari, filter status, dan paginasi data alumni |
+| Detail alumni | Tekan **Nama Lulusan** pada daftar alumni untuk membuka pencarian dan detail pelacakan |
+| Impor roster | Impor data alumni dari XLSX dengan validasi, dry-run, dan perlindungan duplikasi NIM |
+| Pencarian web | Mencari referensi satu alumni melalui SerpApi untuk ditinjau manusia tanpa penyimpanan otomatis |
+| Kandidat manual | Menyimpan data hasil verifikasi manual; kandidat terbaru menjadi identitas terkonfirmasi |
+| Sumber data | Mengatur sumber pencarian, status aktif, dan bobot kepercayaan |
+| Profil | Melihat dan memperbarui nama atau password akun aktif |
+| Privasi | Data alumni terisolasi per akun dan tidak dikumpulkan otomatis secara massal |
 
 ## Teknologi
 
@@ -59,6 +78,20 @@ npm run dev
 ```
 
 Frontend menggunakan API pada `http://localhost:8000` secara default.
+
+## Deployment Produksi
+
+Produksi menggunakan Nginx sebagai reverse proxy dan penyaji frontend, service systemd
+untuk FastAPI/Uvicorn, serta HTTPS dari Let's Encrypt/Certbot. Konfigurasi dan prosedur
+update tersedia di [`deploy/README.md`](deploy/README.md).
+
+Alur layanan produksi:
+
+```text
+Browser ──HTTPS──> Nginx
+                   ├── /           -> frontend/dist (Vue SPA)
+                   └── /api/*      -> 127.0.0.1:8000 (FastAPI)
+```
 
 ## Pengujian
 
@@ -104,8 +137,8 @@ yang benar-benar tercakup oleh test otomatis dan berhasil dijalankan.
 
 | ID | Aspek kualitas | Perintah | Hasil aktual | Status |
 |---|---|---|---|---|
-| VER-01 | Keandalan backend | `cd backend && ./venv/bin/python -m pytest -q` | 31 test lulus dalam 11,89 detik; terdapat 1 peringatan deprecasi dari FastAPI TestClient | Lulus |
-| VER-02 | Build frontend | `cd frontend && npm run build` | Build produksi Vite berhasil; 1.913 modul ditransformasi | Lulus |
+| VER-01 | Keandalan backend | `cd backend && ./venv/bin/python -m pytest -q` | 31 test lulus dalam 10,26 detik; terdapat 1 peringatan deprecasi dari FastAPI TestClient | Lulus |
+| VER-02 | Build frontend | `cd frontend && npm run build` | Build produksi Vite berhasil; 1.912 modul ditransformasi | Lulus |
 
 ### Ringkasan Hasil
 
@@ -123,7 +156,7 @@ yang benar-benar tercakup oleh test otomatis dan berhasil dijalankan.
 | Performa | Uji waktu respons API dan beban bersamaan pada ukuran roster representatif |
 | Kompatibilitas | Uji antarmuka pada Chrome, Firefox, Safari, serta ukuran layar desktop dan mobile |
 | Keamanan lanjutan | Audit dependensi, pengujian rate limit, konfigurasi produksi, dan pengujian penetrasi |
-| Deployment | Smoke test terhadap URL frontend dan backend setelah aplikasi dipublikasikan |
+| Deployment | Uji berkala sertifikat HTTPS, pembaruan Certbot, frontend, dan endpoint health produksi |
 
 ## Struktur Proyek
 
@@ -131,10 +164,10 @@ yang benar-benar tercakup oleh test otomatis dan berhasil dijalankan.
 DailyProject3/
 ├── backend/   # API FastAPI, database, service, repository, dan test
 ├── frontend/  # Aplikasi Vue 3
+├── deploy/    # Konfigurasi Nginx, systemd, dan panduan Certbot
 └── README.md  # Dokumentasi dan hasil pengujian
 ```
 
 Dokumentasi teknis lebih rinci tersedia pada
 [`backend/README.md`](backend/README.md), [`frontend/README.md`](frontend/README.md),
 dan [`deploy/README.md`](deploy/README.md).
-# DailyProject3
