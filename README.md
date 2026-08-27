@@ -148,16 +148,6 @@ yang benar-benar tercakup oleh test otomatis dan berhasil dijalankan.
 | Verifikasi build frontend | 1 | 0 | 1 |
 | **Keseluruhan** | **32** | **0** | **32** |
 
-### Cakupan yang Belum Diuji
-
-| Aspek | Pengujian lanjutan yang diperlukan |
-|---|---|
-| Usability | Uji tugas dengan pengguna: login, mencari alumni, menambah temuan manual, dan membaca hasil |
-| Performa | Uji waktu respons API dan beban bersamaan pada ukuran roster representatif |
-| Kompatibilitas | Uji antarmuka pada Chrome, Firefox, Safari, serta ukuran layar desktop dan mobile |
-| Keamanan lanjutan | Audit dependensi, pengujian rate limit, konfigurasi produksi, dan pengujian penetrasi |
-| Deployment | Uji berkala sertifikat HTTPS, pembaruan Certbot, frontend, dan endpoint health produksi |
-
 ## Struktur Proyek
 
 ```text
