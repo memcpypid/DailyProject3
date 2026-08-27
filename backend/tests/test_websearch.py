@@ -29,14 +29,16 @@ def test_search_web_without_api_key_returns_clear_error(client, auth_headers, mo
 def test_search_web_returns_results_for_human_review(client, auth_headers, monkeypatch):
     monkeypatch.setattr("app.services.websearch_service.settings.SERPAPI_KEY", "fake-key")
 
-    def fake_search_alumni(full_name, extra_context, sources):
+    def fake_search_alumni(alumni_context, sources):
         return [
             {
-                "title": f"{full_name} - LinkedIn",
+                "title": f"{alumni_context['full_name']} - LinkedIn",
                 "link": "https://linkedin.com/in/muhammad-rizky",
                 "snippet": "Software Engineer at PT Contoh",
                 "source": "linkedin.com",
                 "queried_source": "LinkedIn",
+                "target_data": "Alamat sosial media",
+                "query": 'site:linkedin.com "Muhammad Rizky" "Informatika"',
             }
         ]
 
@@ -59,7 +61,18 @@ def test_search_web_unknown_alumni_returns_404(client, auth_headers):
     assert res.status_code == 404
 
 
-def test_search_alumni_uses_source_name_and_weight_to_build_queries(monkeypatch):
+def _alumni_context():
+    return {
+        "full_name": "Budi Santoso",
+        "nim": "201910370001",
+        "tahun_masuk": 2016,
+        "tanggal_lulus": "2020-07-01",
+        "fakultas": "Teknik",
+        "program_studi": "Informatika",
+    }
+
+
+def test_search_alumni_builds_queries_for_daily_project_4_targets(monkeypatch):
     """Nama sumber & bobot kepercayaan sungguhan memengaruhi query ke SerpApi -
     bukan sekadar tampilan di halaman "Sumber Data"."""
     monkeypatch.setattr(websearch_service.settings, "SERPAPI_KEY", "fake-key")
@@ -89,19 +102,20 @@ def test_search_alumni_uses_source_name_and_weight_to_build_queries(monkeypatch)
 
     monkeypatch.setattr(websearch_service.httpx, "get", fake_get)
 
-    results = websearch_service.search_alumni("Budi Santoso", "Informatika", sources)
+    results = websearch_service.search_alumni(_alumni_context(), sources)
 
     # Sumber ber-bobot tertinggi (LinkedIn) dipakai lebih dulu, dengan site: filter.
-    assert captured[0] == 'site:linkedin.com "Budi Santoso" Informatika'
+    assert captured[0] == 'site:linkedin.com "Budi Santoso" "Informatika"'
     assert results[0]["queried_source"] == "LinkedIn"
+    assert results[0]["target_data"] == "Alamat sosial media"
 
-    # Sumber tanpa domain dikenal (Situs Perusahaan/Berita, Mesin Pencari Umum) hanya
-    # menghasilkan SATU query umum (tidak dipanggil dua kali ke SerpApi).
-    generic_queries = [q for q in captured if q == '"Budi Santoso" Informatika']
-    assert len(generic_queries) == 1
-
-    # TikTok (bobot terendah) tetap kebagian slot karena total sumber di bawah batas.
-    assert 'site:tiktok.com "Budi Santoso" Informatika' in captured
+    # Query terarah mencakup kontak, pekerjaan, klasifikasi pekerjaan, serta
+    # media sosial tempat bekerja sesuai delapan target Daily Project 4.
+    combined = "\n".join(captured)
+    assert "email" in combined and "nomor HP" in combined
+    assert "perusahaan" in combined and "instansi" in combined
+    assert "PNS" in combined and "swasta" in combined and "wirausaha" in combined
+    assert "LinkedIn OR Instagram OR Facebook" in combined
 
 
 def test_search_alumni_caps_total_queries_by_weight(monkeypatch):
@@ -131,7 +145,17 @@ def test_search_alumni_caps_total_queries_by_weight(monkeypatch):
 
     monkeypatch.setattr(websearch_service.httpx, "get", fake_get)
 
-    websearch_service.search_alumni("Budi Santoso", "", sources)
+    websearch_service.search_alumni(_alumni_context(), sources)
 
     assert len(captured) == websearch_service.MAX_QUERIES
-    assert not any("Situs Perusahaan" in q or '"Budi Santoso"' == q for q in captured)
+
+
+def test_identity_query_uses_all_master_alumni_fields():
+    queries = websearch_service._build_queries(_alumni_context(), [])
+    identity_query = next(query for _, query, target in queries if target == "Verifikasi identitas alumni")
+    assert '"Budi Santoso"' in identity_query
+    assert '"201910370001"' in identity_query
+    assert '"2016"' in identity_query
+    assert '"2020-07-01"' in identity_query
+    assert '"Teknik"' in identity_query
+    assert '"Informatika"' in identity_query

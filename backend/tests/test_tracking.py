@@ -16,14 +16,30 @@ def test_add_manual_candidate_confirms_identity(client, auth_headers):
             "source_id": source_id,
             "raw_name": "Muhammad Rizky",
             "linkedin_url": "https://linkedin.com/in/mrizky",
+            "instagram_url": "https://instagram.com/mrizky",
+            "facebook_url": "https://facebook.com/mrizky",
+            "tiktok_url": "https://tiktok.com/@mrizky",
+            "email": "rizky@example.com",
+            "phone": "081234567890",
             "employer_name": "PT Contoh Sejahtera",
+            "employer_address": "Jl. Contoh No. 1, Malang",
             "position": "Software Engineer",
+            "employment_type": "Swasta",
+            "employer_social_media": "https://instagram.com/ptcontoh",
         },
         headers=auth_headers,
     )
     assert res.status_code == 201
     candidate = res.json()["data"]
     assert candidate["linkedin_url"] == "https://linkedin.com/in/mrizky"
+    assert candidate["instagram_url"] == "https://instagram.com/mrizky"
+    assert candidate["facebook_url"] == "https://facebook.com/mrizky"
+    assert candidate["tiktok_url"] == "https://tiktok.com/@mrizky"
+    assert candidate["email"] == "rizky@example.com"
+    assert candidate["phone"] == "081234567890"
+    assert candidate["employer_address"] == "Jl. Contoh No. 1, Malang"
+    assert candidate["employment_type"] == "Swasta"
+    assert candidate["employer_social_media"] == "https://instagram.com/ptcontoh"
 
     detail = client.get(f"/api/v1/alumni/{alumni_id}", headers=auth_headers).json()["data"]
     assert detail["status"] == "TERVERIFIKASI_MANUAL"

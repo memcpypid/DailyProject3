@@ -68,7 +68,17 @@ def search_web(alumni_id: str, current_user: User = Depends(get_current_user), d
 
     sources = SourceRepository(db).list_enabled(current_user.id)
     try:
-        results = websearch_service.search_alumni(alumni.full_name, alumni.program_studi or "", sources)
+        results = websearch_service.search_alumni(
+            {
+                "full_name": alumni.full_name,
+                "nim": alumni.nim,
+                "tahun_masuk": alumni.tahun_masuk,
+                "tanggal_lulus": alumni.tanggal_lulus.isoformat() if alumni.tanggal_lulus else "",
+                "fakultas": alumni.fakultas,
+                "program_studi": alumni.program_studi,
+            },
+            sources,
+        )
     except websearch_service.WebSearchUnavailable as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 

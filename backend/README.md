@@ -123,12 +123,13 @@ pencarian sungguhan itu sendiri, memilih yang benar-benar cocok, lalu menyimpann
 diedit sebelum disimpan).
 
 Nama & bobot kepercayaan sumber (halaman "Sumber Data") sungguhan dipakai membangun
-query ke SerpApi (`websearch_service._build_queries`) - bukan sekadar tampilan: sumber
-dengan domain platform yang dikenal (LinkedIn/Instagram/Facebook/TikTok) dibatasi lewat
-`site:`, sumber lain (mis. sumber custom, "Situs Perusahaan/Berita") berbagi satu query
-umum, dan bobot menentukan urutan prioritas serta sumber mana yang dikorbankan saat
-jumlah query dibatasi (`MAX_QUERIES`). Hanya sumber yang `enabled` yang diikutkan. Tiap
-hasil menyertakan `queried_source` supaya periset tahu sumber mana yang menemukannya.
+query ke SerpApi (`websearch_service._build_queries`) - bukan sekadar tampilan. Keenam
+data induk (nama, NIM, tahun masuk, tanggal lulus, fakultas, dan program studi) dipakai
+sebagai konteks identitas. Sistem membentuk query terarah untuk media sosial, email/no.
+HP, tempat/alamat kerja, posisi/jenis pekerjaan, dan media sosial tempat bekerja sesuai
+Daily Project 4. Sumber platform yang dikenal dibatasi melalui `site:`, bobot menentukan
+prioritas, dan jumlah query dibatasi oleh `MAX_QUERIES`. Tiap hasil menyertakan
+`queried_source`, `target_data`, dan `query` agar proses pencarian dapat ditelusuri.
 
 Ini sengaja **tidak** dibuat berjalan otomatis untuk banyak/semua alumni sekaligus -
 tetap harus satu alumni, satu pencarian, satu peninjauan manusia sebelum data

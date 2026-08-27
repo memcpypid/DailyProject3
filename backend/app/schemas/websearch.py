@@ -7,3 +7,5 @@ class WebSearchResult(BaseModel):
     snippet: str
     source: str
     queried_source: str
+    target_data: str
+    query: str

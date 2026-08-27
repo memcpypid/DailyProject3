@@ -29,7 +29,7 @@ SOURCE_DOMAINS = {
     "tiktok": "tiktok.com",
 }
 
-MAX_QUERIES = 4
+MAX_QUERIES = 8
 RESULTS_PER_QUERY = 6
 
 
@@ -45,33 +45,80 @@ def _domain_for(source_name: str) -> str | None:
     return None
 
 
-def _build_queries(full_name: str, extra_context: str, sources: list[Source]) -> list[tuple[str, str]]:
-    """Bangun daftar (nama_sumber, query) terurut dari bobot kepercayaan tertinggi.
+def _quoted(value) -> str:
+    value = str(value or "").strip()
+    return f'"{value}"' if value else ""
 
-    Sumber dengan domain dikenal dibatasi lewat `site:`. Sumber lain (mis.
-    "Situs Perusahaan/Berita", "Mesin Pencari Umum", atau sumber custom
-    buatan periset) berbagi satu query umum - dipilih dari sumber ber-bobot
-    tertinggi di antara mereka, supaya tidak ada dua query identik yang
-    dikirim dua kali ke SerpApi.
+
+def _build_queries(alumni: dict, sources: list[Source]) -> list[tuple[str, str, str]]:
+    """Bangun query terarah untuk delapan kelompok data Daily Project 4.
+
+    Keenam data induk dipakai sebagai konteks identitas di seluruh rangkaian query.
+    Query sengaja tidak dibuat terlalu ketat: nama selalu wajib, sedangkan NIM,
+    tahun, fakultas, dan program studi dibagi ke query verifikasi/kontak/pekerjaan
+    agar hasil publik yang tidak mencantumkan seluruh atribut masih dapat ditemukan.
     """
-    base = f'"{full_name}" {extra_context}'.strip()
-    queries: list[tuple[str, str]] = []
-    generic_added = False
+    full_name = _quoted(alumni.get("full_name"))
+    nim = _quoted(alumni.get("nim"))
+    tahun_masuk = _quoted(alumni.get("tahun_masuk"))
+    tanggal_lulus = _quoted(alumni.get("tanggal_lulus"))
+    fakultas = _quoted(alumni.get("fakultas"))
+    program_studi = _quoted(alumni.get("program_studi"))
+    academic_context = " ".join(term for term in (program_studi, fakultas) if term)
+    compact_context = program_studi or fakultas
+
+    queries: list[tuple[str, str, str]] = []
+    generic_sources: list[Source] = []
     for source in sorted(sources, key=lambda s: s.weight, reverse=True):
-        if len(queries) >= MAX_QUERIES:
-            break
         domain = _domain_for(source.name)
         if domain:
-            queries.append((source.name, f"site:{domain} {base}"))
-        elif not generic_added:
-            queries.append((source.name, base))
-            generic_added = True
-    if not queries:
-        queries.append(("Mesin Pencari Umum", base))
-    return queries
+            queries.append(
+                (source.name, f"site:{domain} {full_name} {compact_context}".strip(), "Alamat sosial media")
+            )
+        else:
+            generic_sources.append(source)
+
+    generic_name = generic_sources[0].name if generic_sources else "Mesin Pencari Umum"
+    targeted = [
+        (
+            generic_name,
+            " ".join(term for term in (full_name, nim, tahun_masuk, tanggal_lulus, academic_context) if term),
+            "Verifikasi identitas alumni",
+        ),
+        (
+            generic_name,
+            f'{full_name} {compact_context} (email OR "nomor HP" OR telepon OR WhatsApp)'.strip(),
+            "Email dan nomor HP",
+        ),
+        (
+            generic_name,
+            f'{full_name} {compact_context} (bekerja OR perusahaan OR instansi OR employer)'.strip(),
+            "Tempat dan alamat bekerja",
+        ),
+        (
+            generic_name,
+            f'{full_name} {compact_context} (jabatan OR posisi OR position OR PNS OR swasta OR wirausaha)'.strip(),
+            "Posisi dan jenis pekerjaan",
+        ),
+        (
+            generic_name,
+            f'{full_name} {compact_context} (perusahaan OR instansi) (LinkedIn OR Instagram OR Facebook)'.strip(),
+            "Sosial media tempat bekerja",
+        ),
+    ]
+    queries.extend(targeted)
+
+    # Hindari query kosong/duplikat dan batasi biaya panggilan SerpApi.
+    unique: list[tuple[str, str, str]] = []
+    seen: set[str] = set()
+    for item in queries:
+        if item[1] and item[1] not in seen:
+            seen.add(item[1])
+            unique.append(item)
+    return unique[:MAX_QUERIES]
 
 
-def search_alumni(full_name: str, extra_context: str, sources: list[Source]) -> list[dict]:
+def search_alumni(alumni: dict, sources: list[Source]) -> list[dict]:
     if not settings.SERPAPI_KEY:
         raise WebSearchUnavailable(
             "Fitur pencarian web belum aktif - atur SERPAPI_KEY di file .env backend "
@@ -82,7 +129,7 @@ def search_alumni(full_name: str, extra_context: str, sources: list[Source]) -> 
     seen_links: set[str] = set()
     last_error: httpx.HTTPError | None = None
 
-    for source_name, query in _build_queries(full_name, extra_context, sources):
+    for source_name, query, target_data in _build_queries(alumni, sources):
         try:
             response = httpx.get(
                 settings.SERPAPI_BASE_URL,
@@ -107,6 +154,8 @@ def search_alumni(full_name: str, extra_context: str, sources: list[Source]) -> 
                     "snippet": item.get("snippet", ""),
                     "source": item.get("source", ""),
                     "queried_source": source_name,
+                    "target_data": target_data,
+                    "query": query,
                 }
             )
 

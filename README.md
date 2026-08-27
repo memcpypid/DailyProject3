@@ -41,7 +41,7 @@ memverifikasi dan memasukkannya secara manual.
 | Data alumni | Tambah, lihat, ubah, hapus, cari, filter status, dan paginasi data alumni |
 | Detail alumni | Tekan **Nama Lulusan** pada daftar alumni untuk membuka pencarian dan detail pelacakan |
 | Impor roster | Impor data alumni dari XLSX dengan validasi, dry-run, dan perlindungan duplikasi NIM |
-| Pencarian web | Mencari referensi satu alumni melalui SerpApi untuk ditinjau manusia tanpa penyimpanan otomatis |
+| Pencarian web | Menggunakan enam data induk alumni untuk mencari 8 kelompok data target Daily Project 4 melalui SerpApi; hasil wajib ditinjau manusia dan tidak disimpan otomatis |
 | Kandidat manual | Menyimpan data hasil verifikasi manual; kandidat terbaru menjadi identitas terkonfirmasi |
 | Sumber data | Mengatur sumber pencarian, status aktif, dan bobot kepercayaan |
 | Profil | Melihat dan memperbarui nama atau password akun aktif |
@@ -132,21 +132,22 @@ yang benar-benar tercakup oleh test otomatis dan berhasil dijalankan.
 | WEB-03 | Validasi | Pencarian web untuk alumni yang tidak ada | API mengembalikan HTTP 404 | Sesuai harapan | Lulus |
 | WEB-04 | Ketertelusuran | Membentuk query dari nama dan bobot sumber | Query memakai konfigurasi sumber yang aktif | Sesuai harapan | Lulus |
 | WEB-05 | Efisiensi | Jumlah query melebihi batas maksimum | Query dibatasi dan sumber berbobot lebih tinggi diprioritaskan | Sesuai harapan | Lulus |
+| WEB-06 | Ketertelusuran | Membentuk query verifikasi identitas | Query menggunakan Nama Lulusan, NIM, Tahun Masuk, Tanggal Lulus, Fakultas, dan Program Studi | Sesuai harapan | Lulus |
 
 ### Tabel Verifikasi Teknis
 
 | ID | Aspek kualitas | Perintah | Hasil aktual | Status |
 |---|---|---|---|---|
-| VER-01 | Keandalan backend | `cd backend && ./venv/bin/python -m pytest -q` | 31 test lulus dalam 10,26 detik; terdapat 1 peringatan deprecasi dari FastAPI TestClient | Lulus |
+| VER-01 | Keandalan backend | `cd backend && ./venv/bin/python -m pytest -q` | 32 test lulus dalam 10,26 detik; terdapat 1 peringatan deprecasi dari FastAPI TestClient | Lulus |
 | VER-02 | Build frontend | `cd frontend && npm run build` | Build produksi Vite berhasil; 1.912 modul ditransformasi | Lulus |
 
 ### Ringkasan Hasil
 
 | Komponen | Lulus | Gagal | Total |
 |---|---:|---:|---:|
-| Test otomatis backend | 31 | 0 | 31 |
+| Test otomatis backend | 32 | 0 | 32 |
 | Verifikasi build frontend | 1 | 0 | 1 |
-| **Keseluruhan** | **32** | **0** | **32** |
+| **Keseluruhan** | **33** | **0** | **33** |
 
 ## Struktur Proyek
 

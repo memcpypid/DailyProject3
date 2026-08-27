@@ -60,7 +60,7 @@ const useSearchResult = (result) => {
   const initialData = {
     source_id: source?.id || '',
     raw_name: alumniStore.current.full_name,
-    snippet: `${result.title} - ${result.snippet} (${result.link})`,
+    snippet: `[${result.target_data}] ${result.title} - ${result.snippet} (${result.link})`,
   };
   if (platform === 'LinkedIn') initialData.linkedin_url = result.link;
   if (platform === 'Instagram') initialData.instagram_url = result.link;
@@ -260,6 +260,9 @@ const formatDate = (iso) => (iso ? new Date(iso).toLocaleString('id-ID', { dateS
                   </a>
                   <Badge v-if="result.queried_source" variant="outline" custom-class="shrink-0">{{ result.queried_source }}</Badge>
                 </div>
+                <p v-if="result.target_data" class="text-xs font-medium text-primary mt-1">
+                  Target data: {{ result.target_data }}
+                </p>
                 <p class="text-xs text-muted-foreground mt-1">{{ result.link }}</p>
                 <p class="text-sm text-foreground mt-1.5">{{ result.snippet }}</p>
                 <Button variant="outline" customClass="mt-2" @click="useSearchResult(result)">Gunakan hasil ini</Button>
