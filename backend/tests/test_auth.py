@@ -1,12 +1,5 @@
-def test_register_and_login(client):
-    res = client.post(
-        "/api/v1/auth/register",
-        json={"name": "Darma", "email": "darma@test.com", "password": "secret123"},
-    )
-    assert res.status_code == 201
-    assert res.json()["data"]["email"] == "darma@test.com"
-    assert "password" not in res.json()["data"]
-
+def test_login_existing_user(client, create_user):
+    create_user()
     res = client.post(
         "/api/v1/auth/login", json={"email": "darma@test.com", "password": "secret123"}
     )
@@ -17,22 +10,20 @@ def test_register_and_login(client):
     assert body["user"]["email"] == "darma@test.com"
 
 
-def test_login_wrong_password_returns_401(client):
-    client.post(
-        "/api/v1/auth/register",
-        json={"name": "Darma", "email": "darma@test.com", "password": "secret123"},
-    )
+def test_login_wrong_password_returns_401(client, create_user):
+    create_user()
     res = client.post(
         "/api/v1/auth/login", json={"email": "darma@test.com", "password": "wrong"}
     )
     assert res.status_code == 401
 
 
-def test_duplicate_email_register_returns_409(client):
-    payload = {"name": "Darma", "email": "darma@test.com", "password": "secret123"}
-    client.post("/api/v1/auth/register", json=payload)
-    res = client.post("/api/v1/auth/register", json=payload)
-    assert res.status_code == 409
+def test_public_registration_is_not_available(client):
+    res = client.post(
+        "/api/v1/auth/register",
+        json={"name": "Darma", "email": "darma@test.com", "password": "secret123"},
+    )
+    assert res.status_code == 404
 
 
 def test_protected_route_requires_token(client):
@@ -46,11 +37,8 @@ def test_me_returns_current_user(client, auth_headers):
     assert res.json()["data"]["email"] == "darma@test.com"
 
 
-def test_refresh_rotates_token_and_old_one_is_revoked(client):
-    client.post(
-        "/api/v1/auth/register",
-        json={"name": "Darma", "email": "darma@test.com", "password": "secret123"},
-    )
+def test_refresh_rotates_token_and_old_one_is_revoked(client, create_user):
+    create_user()
     login = client.post(
         "/api/v1/auth/login", json={"email": "darma@test.com", "password": "secret123"}
     ).json()["data"]

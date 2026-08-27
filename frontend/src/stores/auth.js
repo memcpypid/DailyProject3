@@ -140,20 +140,6 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const register = async (payload) => {
-    loading.value = true;
-    try {
-      const res = await authService.register(payload);
-      toast.success('User created successfully');
-      return res;
-    } catch (err) {
-      toast.error(err.response?.data?.message || err.message || 'Operation failed');
-      throw err;
-    } finally {
-      loading.value = false;
-    }
-  };
-
   // Getters (in Setup Stores these are simply functions or computed properties)
   const isAuthenticated = () => {
     return !!token.value;
@@ -177,7 +163,6 @@ export const useAuthStore = defineStore("auth", () => {
     logout,
     fetchProfile,
     updateProfile,
-    register,
     clearError,
     // Getters / Checks
     isAuthenticated,

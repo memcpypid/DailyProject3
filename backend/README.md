@@ -3,7 +3,8 @@
 FastAPI + SQLite, mengimplementasikan pseudocode & use case diagram dari Daily Project 2,
 dengan skema data alumni yang disesuaikan dengan roster resmi kampus (Daily Project 4).
 Autentikasi JWT (access + refresh token, tanpa role) - setiap akun hanya mengelola data
-alumni miliknya sendiri.
+alumni miliknya sendiri. Registrasi publik dinonaktifkan; hanya akun yang sudah
+disediakan administrator yang dapat login.
 
 ## Menjalankan
 
@@ -150,7 +151,6 @@ dengan pesan generik ke klien (detail teknis tidak dibocorkan ke frontend).
 
 | Method | Path | Keterangan |
 |---|---|---|
-| POST | `/api/v1/auth/register` | Registrasi akun baru (otomatis seed 6 sumber default) |
 | POST | `/api/v1/auth/login` | Login, dapat access + refresh token |
 | POST | `/api/v1/auth/refresh` | Rotasi token |
 | POST | `/api/v1/auth/logout` | Cabut refresh token |

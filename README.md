@@ -69,9 +69,9 @@ yang benar-benar tercakup oleh test otomatis dan berhasil dijalankan.
 
 | ID | Aspek kualitas | Skenario pengujian | Hasil yang diharapkan | Hasil aktual | Status |
 |---|---|---|---|---|---|
-| AUTH-01 | Fungsionalitas | Registrasi, login, dan membaca profil pengguna aktif | Akun dapat dibuat, login menghasilkan token, dan profil pengguna dikembalikan | Sesuai harapan | Lulus |
+| AUTH-01 | Fungsionalitas | Login menggunakan akun yang sudah tersedia dan membaca profil aktif | Login menghasilkan token dan profil pengguna dikembalikan | Sesuai harapan | Lulus |
 | AUTH-02 | Keamanan | Login menggunakan kata sandi salah | API menolak permintaan dengan HTTP 401 | Sesuai harapan | Lulus |
-| AUTH-03 | Integritas data | Registrasi menggunakan email yang sudah terdaftar | API menolak duplikasi dengan HTTP 409 | Sesuai harapan | Lulus |
+| AUTH-03 | Keamanan | Mengakses endpoint registrasi publik | Endpoint tidak tersedia dan API mengembalikan HTTP 404 | Sesuai harapan | Lulus |
 | AUTH-04 | Keamanan | Mengakses endpoint terlindungi tanpa token | API menolak akses | Sesuai harapan | Lulus |
 | AUTH-05 | Keamanan | Melakukan refresh token dan memakai kembali token lama | Token baru diterbitkan dan token lama dicabut | Sesuai harapan | Lulus |
 | AUTH-06 | Keamanan | Logout lalu menggunakan refresh token yang telah dicabut | Refresh token tidak dapat dipakai kembali | Sesuai harapan | Lulus |
@@ -88,7 +88,7 @@ yang benar-benar tercakup oleh test otomatis dan berhasil dijalankan.
 | IMP-07 | Validasi | Mengimpor ekstensi berkas yang tidak didukung | Berkas ditolak | Sesuai harapan | Lulus |
 | IMP-08 | Keamanan | Mengakses impor tanpa autentikasi | Permintaan ditolak | Sesuai harapan | Lulus |
 | IMP-09 | Integritas data | Baris impor tidak memiliki nama atau NIM | Baris tidak valid dilewati | Sesuai harapan | Lulus |
-| SRC-01 | Fungsionalitas | Registrasi akun baru | Enam sumber data default otomatis dibuat | Sesuai harapan | Lulus |
+| SRC-01 | Fungsionalitas | Provisioning akun internal | Enam sumber data default otomatis dibuat | Sesuai harapan | Lulus |
 | SRC-02 | Fungsionalitas | Membuat, mengubah, dan menghapus sumber data | Seluruh operasi CRUD sumber berhasil | Sesuai harapan | Lulus |
 | SRC-03 | Validasi | Menyimpan bobot kepercayaan di luar rentang valid | Data ditolak oleh validasi | Sesuai harapan | Lulus |
 | TRK-01 | Fungsionalitas | Menambahkan kandidat hasil verifikasi manual | Kandidat menjadi identitas alumni terkonfirmasi | Sesuai harapan | Lulus |

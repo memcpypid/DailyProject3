@@ -38,7 +38,7 @@ def main():
     try:
         user = db.query(User).filter(User.email == args.email.lower()).first()
         if not user:
-            print(f"Akun dengan email {args.email} tidak ditemukan. Registrasi dulu lewat aplikasi.", file=sys.stderr)
+            print(f"Akun dengan email {args.email} tidak ditemukan. Sediakan akun melalui administrator.", file=sys.stderr)
             sys.exit(1)
 
         try:

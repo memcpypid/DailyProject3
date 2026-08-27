@@ -1,4 +1,4 @@
-def test_default_sources_seeded_on_register(client, auth_headers):
+def test_default_sources_seeded_for_provisioned_user(client, auth_headers):
     res = client.get("/api/v1/sources", headers=auth_headers)
     assert res.status_code == 200
     names = {s["name"] for s in res.json()["data"]}

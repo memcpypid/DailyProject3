@@ -37,15 +37,6 @@ class AuthService {
   }
 
   /**
-   * Endpoint for user registration
-   * @param {Object} payload - Registration info (name, email, password)
-   * @returns {Promise<import('axios').AxiosResponse<{success: boolean, message: string}>>}
-   */
-  register(payload) {
-    return api.post("/api/v1/auth/register", payload);
-  }
-
-  /**
    * Endpoint to update current user profile
    * @param {Object} payload - Update payload (name, password)
    * @returns {Promise<import('axios').AxiosResponse<{success: boolean, message: string, data: UserResponse}>>}

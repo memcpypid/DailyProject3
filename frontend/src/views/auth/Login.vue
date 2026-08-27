@@ -88,11 +88,6 @@ const onSubmit = handleSubmit(async (values) => {
         </Button>
       </form>
 
-      <div class="mt-6 text-center text-sm text-muted-foreground">
-        Don't have an account?
-        <router-link to="/register" class="font-medium text-primary hover:underline">Sign up</router-link>
-      </div>
-
     </div>
   </div>
 </template>

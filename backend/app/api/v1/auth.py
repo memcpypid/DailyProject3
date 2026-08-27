@@ -7,7 +7,6 @@ from app.schemas.auth import (
     LogoutRequest,
     RefreshRequest,
     RefreshResponse,
-    RegisterRequest,
     TokenPair,
 )
 from app.schemas.common import SuccessResponse
@@ -15,16 +14,6 @@ from app.schemas.user import UserResponse
 from app.services.auth_service import AuthError, AuthService
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-
-
-@router.post("/register", response_model=SuccessResponse[UserResponse], status_code=status.HTTP_201_CREATED)
-def register(payload: RegisterRequest, db: Session = Depends(get_db)):
-    service = AuthService(db)
-    try:
-        user = service.register(payload.name, payload.email, payload.password)
-    except AuthError as exc:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
-    return SuccessResponse(message="Registrasi berhasil", data=UserResponse.model_validate(user))
 
 
 @router.post("/login", response_model=SuccessResponse[TokenPair])

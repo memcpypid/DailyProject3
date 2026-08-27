@@ -52,20 +52,14 @@ def test_update_and_delete_alumni(client, auth_headers):
     assert missing.status_code == 404
 
 
-def test_alumni_isolated_per_account(client):
-    client.post(
-        "/api/v1/auth/register",
-        json={"name": "Owner A", "email": "a@test.com", "password": "secret123"},
-    )
+def test_alumni_isolated_per_account(client, create_user):
+    create_user("Owner A", "a@test.com")
     token_a = client.post(
         "/api/v1/auth/login", json={"email": "a@test.com", "password": "secret123"}
     ).json()["data"]["access_token"]
     headers_a = {"Authorization": f"Bearer {token_a}"}
 
-    client.post(
-        "/api/v1/auth/register",
-        json={"name": "Owner B", "email": "b@test.com", "password": "secret123"},
-    )
+    create_user("Owner B", "b@test.com")
     token_b = client.post(
         "/api/v1/auth/login", json={"email": "b@test.com", "password": "secret123"}
     ).json()["data"]["access_token"]

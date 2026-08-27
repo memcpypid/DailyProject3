@@ -48,7 +48,6 @@ api.interceptors.response.use(
     const originalRequest = error.config;
     const isAuthRoute =
       originalRequest.url.includes("/auth/login") ||
-      originalRequest.url.includes("/auth/register") ||
       originalRequest.url.includes("/auth/refresh");
 
     if (

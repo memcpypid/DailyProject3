@@ -9,7 +9,7 @@ pengguna hanya mengelola data alumni miliknya sendiri.
 
 ## Fitur
 
-- **Autentikasi**: login, registrasi, refresh token otomatis (Axios interceptor), logout.
+- **Autentikasi**: login akun yang sudah disediakan, refresh token otomatis (Axios interceptor), logout. Registrasi publik dinonaktifkan.
 - **Data Alumni**: CRUD sesuai kolom roster kampus (Nama Lulusan, NIM, Tahun Masuk, Tanggal
   Lulus, Fakultas, Program Studi), pencarian, filter status, paginasi.
 - **Pelacakan multi-sumber (simulasi demo)**: jalankan pipeline pencarian per alumni atau proses
@@ -68,7 +68,7 @@ Backend: FastAPI + SQLite (lihat `../backend/README.md`).
   `source.service.js`, `tracking.service.js`, `review.service.js`, `dashboard.service.js`).
 - `src/stores` - modul status global Pinia per domain (`auth`, `alumni`, `sources`, `review`,
   `dashboard`, `theme`).
-- `src/views` - halaman aplikasi (`auth/Login.vue`, `auth/Register.vue`, `Dashboard.vue`,
+- `src/views` - halaman aplikasi (`auth/Login.vue`, `Dashboard.vue`,
   `Alumni.vue`, `AlumniDetail.vue`, `Sources.vue`, `Review.vue`, `Profile.vue`).
 - `src/layouts` - `AuthLayout.vue` (login/register) dan `AppLayout.vue` (sidebar + halaman utama).
 - `src/components/ui` - komponen desain sistem (Button, Input, Select, Badge, Card, Toast, dll).
