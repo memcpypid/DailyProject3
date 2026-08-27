@@ -29,8 +29,16 @@ memverifikasi dan memasukkannya secara manual.
 | Publikasi web | [sinata.tech](https://sinata.tech) | Tersedia |
 | Dokumentasi API | [sinata.tech/docs](https://sinata.tech/docs) | Tersedia untuk administrator/pengembang |
 
-> Keamanan: kredensial akun dan API key tidak dicantumkan di README. Hubungi
-> administrator untuk mendapatkan akses aplikasi.
+## Akun Login
+
+Gunakan akun berikut untuk masuk ke aplikasi:
+
+| Email | Password |
+|---|---|
+| `admin@sinata.tech` | `Admin2026@` |
+
+> Catatan keamanan: akun ini dipublikasikan untuk keperluan demonstrasi. Ganti
+> password apabila aplikasi digunakan dengan data produksi atau dapat diakses publik.
 
 ## Fitur Utama
 
