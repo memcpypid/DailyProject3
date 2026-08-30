@@ -37,7 +37,7 @@ class AlumniRepository:
             stmt = stmt.where(Alumni.status == status)
 
         total = self.db.scalar(select(func.count()).select_from(stmt.subquery())) or 0
-        stmt = stmt.order_by(Alumni.created_at.desc()).offset((page - 1) * limit).limit(limit)
+        stmt = stmt.order_by(Alumni.updated_at.desc(), Alumni.created_at.desc()).offset((page - 1) * limit).limit(limit)
         items = list(self.db.scalars(stmt))
         return items, total
 

@@ -192,28 +192,45 @@ const searchTargetsFor = (alumni) => {
               </th>
               <th class="pb-3 font-medium">Nama Lulusan</th>
               <th class="pb-3 font-medium">Fakultas / Program Studi</th>
-              <th class="pb-3 font-medium">Tanggal Lulus</th>
+              <th class="pb-3 font-medium">Temuan Pekerjaan & Medsos (OSINT)</th>
               <th class="pb-3 font-medium">Status</th>
               <th class="pb-3 font-medium text-right">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="alumni in alumniStore.items" :key="alumni.id" class="border-b border-border last:border-0">
+            <tr v-for="alumni in alumniStore.items" :key="alumni.id" class="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
               <td class="py-3 pr-3">
                 <input v-model="selectedIds" type="checkbox" :value="alumni.id"
                   :aria-label="`Pilih ${alumni.full_name}`" class="h-4 w-4 rounded border-border" />
               </td>
               <td class="py-3">
-                <router-link :to="`/app/alumni/${alumni.id}`" class="font-medium text-foreground hover:text-primary hover:underline">
+                <router-link :to="`/app/alumni/${alumni.id}`" class="font-medium text-foreground hover:text-primary hover:underline block">
                   {{ alumni.full_name }}
                 </router-link>
-                <p class="text-xs text-muted-foreground">{{ alumni.nim }}</p>
+                <p class="text-xs text-muted-foreground">NIM: {{ alumni.nim || '-' }} &middot; {{ alumni.tanggal_lulus || '-' }}</p>
               </td>
-              <td class="py-3 text-foreground">
-                {{ alumni.fakultas || '-' }}
-                <span v-if="alumni.program_studi" class="text-muted-foreground"> &middot; {{ alumni.program_studi }}</span>
+              <td class="py-3 text-foreground text-xs">
+                <span class="font-medium">{{ alumni.fakultas || '-' }}</span>
+                <p v-if="alumni.program_studi" class="text-muted-foreground">{{ alumni.program_studi }}</p>
               </td>
-              <td class="py-3 text-foreground">{{ alumni.tanggal_lulus || '-' }}</td>
+              <td class="py-3 text-xs">
+                <div v-if="alumni.confirmed_profile" class="space-y-1 max-w-xs">
+                  <div v-if="alumni.confirmed_profile.employer_name || alumni.confirmed_profile.position" class="font-medium text-foreground truncate">
+                    <span>{{ alumni.confirmed_profile.position || 'Bekerja' }}</span>
+                    <span v-if="alumni.confirmed_profile.employer_name" class="text-muted-foreground"> @ {{ alumni.confirmed_profile.employer_name }}</span>
+                    <span v-if="alumni.confirmed_profile.employment_type" class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-semibold">
+                      {{ alumni.confirmed_profile.employment_type }}
+                    </span>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2 text-[11px]">
+                    <a v-if="alumni.confirmed_profile.linkedin_url" :href="alumni.confirmed_profile.linkedin_url" target="_blank" class="text-blue-500 hover:underline">LinkedIn</a>
+                    <a v-if="alumni.confirmed_profile.instagram_url" :href="alumni.confirmed_profile.instagram_url" target="_blank" class="text-pink-500 hover:underline">Instagram</a>
+                    <span v-if="alumni.confirmed_profile.email" class="text-muted-foreground font-mono text-[11px] truncate max-w-[140px]">{{ alumni.confirmed_profile.email }}</span>
+                    <span v-if="alumni.confirmed_profile.phone" class="text-emerald-600 dark:text-emerald-400 font-mono text-[11px]">{{ alumni.confirmed_profile.phone }}</span>
+                  </div>
+                </div>
+                <span v-else class="text-muted-foreground/60 text-xs italic">Belum ada temuan</span>
+              </td>
               <td class="py-3">
                 <Badge :variant="statusInfo(alumni.status).variant">{{ statusInfo(alumni.status).label }}</Badge>
               </td>
