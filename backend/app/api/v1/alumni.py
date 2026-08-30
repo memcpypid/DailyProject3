@@ -8,11 +8,48 @@ from app.schemas.alumni import AlumniCreateRequest, AlumniImportResponse, Alumni
 from app.schemas.common import SuccessResponse, paginate
 from app.services.alumni_service import AlumniService, to_alumni_response
 from app.services.import_service import ImportError_, import_file
+from app.services.import_enriched_service import import_enriched_file
 
 router = APIRouter(prefix="/alumni", tags=["alumni"])
 
 ALLOWED_IMPORT_EXTENSIONS = (".xlsx", ".xls", ".csv")
 MAX_IMPORT_FILE_SIZE = 25 * 1024 * 1024  # 25 MB
+
+
+@router.post("/import-enriched", response_model=SuccessResponse[dict])
+async def import_enriched_alumni(
+    file: UploadFile = File(...),
+    dry_run: bool = Query(False, description="Hanya tampilkan ringkasan, jangan simpan ke DB"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Impor file hasil scraping OSINT (DailyProject4) langsung ke profil alumni & kandidat."""
+    filename = file.filename or ""
+    if not filename.lower().endswith(ALLOWED_IMPORT_EXTENSIONS):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Format file tidak didukung. Gunakan salah satu dari: {', '.join(ALLOWED_IMPORT_EXTENSIONS)}",
+        )
+
+    content = await file.read()
+    if len(content) > MAX_IMPORT_FILE_SIZE:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ukuran file melebihi batas 25 MB")
+
+    try:
+        summary = import_enriched_file(db, current_user.id, content, filename, dry_run=dry_run)
+    except Exception as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Gagal impor: {exc}") from exc
+
+    return SuccessResponse(
+        message=f"Berhasil mengimpor {summary.candidates_created} temuan scraping!",
+        data={
+            "total_rows": summary.total_rows,
+            "alumni_created": summary.alumni_created,
+            "alumni_updated": summary.alumni_updated,
+            "candidates_created": summary.candidates_created,
+            "skipped_empty": summary.skipped_empty,
+        }
+    )
 
 
 @router.post("/import", response_model=SuccessResponse[AlumniImportResponse])

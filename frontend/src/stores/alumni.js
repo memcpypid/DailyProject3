@@ -114,6 +114,25 @@ export const useAlumniStore = defineStore("alumni", () => {
     }
   };
 
+  const importEnriched = async (file, options = {}) => {
+    importing.value = true;
+    try {
+      const res = await alumniService.importEnriched(file, options);
+      const summary = res.data.data;
+      if (!options.dryRun) {
+        toast.success(
+          `Impor hasil scraping selesai: ${summary.candidates_created} profil temuan diperkaya (${summary.alumni_updated} data alumni diperbarui)`
+        );
+      }
+      return summary;
+    } catch (err) {
+      toast.error(err.response?.data?.detail || "Impor hasil scraping gagal");
+      throw err;
+    } finally {
+      importing.value = false;
+    }
+  };
+
   return {
     items,
     pagination,
@@ -132,6 +151,7 @@ export const useAlumniStore = defineStore("alumni", () => {
     addManualCandidate,
     reviewCandidate,
     importExcel,
+    importEnriched,
     searchWeb,
   };
 });

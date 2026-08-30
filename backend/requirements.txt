@@ -10,3 +10,5 @@ pytest
 httpx
 pandas
 openpyxl
+ddgs
+beautifulsoup4

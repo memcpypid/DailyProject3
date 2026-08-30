@@ -47,6 +47,15 @@ class AlumniService {
       headers: { "Content-Type": "multipart/form-data" },
     });
   }
+
+  importEnriched(file, { dryRun = false } = {}) {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/api/v1/alumni/import-enriched", formData, {
+      params: { dry_run: dryRun },
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  }
 }
 
 export default new AlumniService();

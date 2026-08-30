@@ -12,7 +12,10 @@ import Badge from '@/components/ui/Badge.vue';
 import Skeleton from '@/components/ui/Skeleton.vue';
 import AlumniModal from '@/components/modals/AlumniModal.vue';
 import ImportAlumniModal from '@/components/modals/ImportAlumniModal.vue';
+import ImportEnrichedModal from '@/components/modals/ImportEnrichedModal.vue';
+import AutoScraperModal from '@/components/modals/AutoScraperModal.vue';
 import ConfirmModal from '@/components/modals/ConfirmModal.vue';
+import { Sparkles, Bot } from 'lucide-vue-next';
 
 const alumniStore = useAlumniStore();
 const router = useRouter();
@@ -23,6 +26,8 @@ const statusFilter = ref('');
 
 const modalOpen = ref(false);
 const importModalOpen = ref(false);
+const importEnrichedModalOpen = ref(false);
+const autoScraperModalOpen = ref(false);
 const editingAlumni = ref(null);
 const confirmOpen = ref(false);
 const deletingAlumni = ref(null);
@@ -132,14 +137,22 @@ const searchTargetsFor = (alumni) => {
         <h1 class="text-3xl font-bold tracking-tight text-foreground">Data Alumni</h1>
         <p class="text-muted-foreground mt-2">Kelola profil alumni dan catat temuan hasil riset manual.</p>
       </div>
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-2">
         <Button variant="outline" :disabled="!selectedIds.length" @click="batchPanelOpen = true">
           <template #icon-left><ListChecks class="w-4 h-4 mr-2" /></template>
           Pencarian Batch ({{ selectedIds.length }})
         </Button>
         <Button variant="outline" @click="importModalOpen = true">
           <template #icon-left><FileSpreadsheet class="w-4 h-4 mr-2" /></template>
-          Impor Excel
+          Impor Roster Excel
+        </Button>
+        <Button variant="secondary" @click="importEnrichedModalOpen = true" class="bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/20">
+          <template #icon-left><Sparkles class="w-4 h-4 mr-2 text-amber-500" /></template>
+          Impor File CSV Scraping
+        </Button>
+        <Button @click="autoScraperModalOpen = true" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-sm font-medium">
+          <template #icon-left><Bot class="w-4 h-4 mr-2" /></template>
+          Auto-Scraping Bot (OSINT)
         </Button>
         <Button @click="openCreate">
           <template #icon-left><Plus class="w-4 h-4 mr-2" /></template>
@@ -150,7 +163,7 @@ const searchTargetsFor = (alumni) => {
 
     <div class="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-foreground">
       <Search class="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-      <p>Silakan tekan <strong>Nama Lulusan</strong> untuk dapat mencari data.</p>
+      <p>Silakan tekan <strong>Nama Lulusan</strong> untuk melihat detail profil atau klik <strong>Auto-Scraping Bot (OSINT)</strong> untuk memulai pencarian data otomatis.</p>
     </div>
 
     <Card body-class="p-4 sm:p-6">
@@ -240,6 +253,10 @@ const searchTargetsFor = (alumni) => {
     <AlumniModal :is-open="modalOpen" :alumni="editingAlumni" @close="modalOpen = false" @success="onModalSuccess" />
 
     <ImportAlumniModal :is-open="importModalOpen" @close="importModalOpen = false" @success="onModalSuccess" />
+
+    <ImportEnrichedModal :is-open="importEnrichedModalOpen" @close="importEnrichedModalOpen = false" @success="onModalSuccess" />
+
+    <AutoScraperModal :is-open="autoScraperModalOpen" @close="autoScraperModalOpen = false" @updated="load(alumniStore.pagination.page)" />
 
     <ConfirmModal :is-open="confirmOpen" title="Hapus Alumni"
       :message="`Yakin ingin menghapus data ${deletingAlumni?.full_name}? Tindakan ini tidak dapat dibatalkan.`"
